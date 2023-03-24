@@ -260,7 +260,7 @@ class Position(object):
             ret = self.__posTracker.getReturn(price, includeCommissions)
         return ret
 
-    def getPnL(self, includeCommissions=True):
+    def getPnL(self, price=None, includeCommissions=True):
         """
         Calculates PnL up to this point.
         If the position is not closed, these will be unrealized PnL.
@@ -271,7 +271,8 @@ class Position(object):
             warninghelpers.deprecation_warning("includeCommissions will be deprecated in the next version.", stacklevel=2)
 
         ret = 0
-        price = self.getLastPrice()
+        if price is None:
+            price = self.getLastPrice()
         if price is not None:
             ret = self.__posTracker.getPnL(price=price, includeCommissions=includeCommissions)
         return ret

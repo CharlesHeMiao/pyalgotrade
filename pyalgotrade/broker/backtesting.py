@@ -94,6 +94,29 @@ class TradePercentage(Commission):
         return price * quantity * self.__percentage
 
 
+# add by : Charles_He 2023/3/24
+class TradePercentageWithMin(Commission):
+    """A :class:`Commission` class that charges a percentage of the whole trade. If the calculated value is smaller than
+        min value, min commission fee is charged.
+
+    :param percentage: The percentage to charge. 0.01 means 1%, and so on. It must be smaller than 1.
+    :type percentage: float.
+    :param min_fee: minimum commission fee.
+    :type min_fee: float.
+    """
+    def __init__(self, percentage, min_fee):
+        super().__init__()
+        assert percentage < 1
+        self.__percentage = percentage
+        self.__min_fee = min_fee
+
+    def calculate(self, order, price, quantity):
+        ret = round(price * quantity * self.__percentage, 2)
+        if ret < self.__min_fee:
+            ret = self.__min_fee
+        return ret
+
+
 ######################################################################
 # Orders
 
