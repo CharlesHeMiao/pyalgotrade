@@ -30,6 +30,7 @@ from pyalgotrade.bitstamp import common
 def get_current_datetime():
     return datetime.datetime.now()
 
+
 # Bitstamp protocol reference: https://www.bitstamp.net/websocket/
 
 

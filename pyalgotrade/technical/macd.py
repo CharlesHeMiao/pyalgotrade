@@ -38,11 +38,12 @@ class MACD(dataseries.SequenceDataSeries):
         opposite end. If None then dataseries.DEFAULT_MAX_LEN is used.
     :type maxLen: int.
     """
+
     def __init__(self, dataSeries, fastEMA, slowEMA, signalEMA, maxLen=None):
-        assert(fastEMA > 0)
-        assert(slowEMA > 0)
-        assert(fastEMA < slowEMA)
-        assert(signalEMA > 0)
+        assert (fastEMA > 0)
+        assert (slowEMA > 0)
+        assert (fastEMA < slowEMA)
+        assert (signalEMA > 0)
 
         super(MACD, self).__init__(maxLen)
 

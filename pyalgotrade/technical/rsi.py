@@ -22,6 +22,7 @@ from six.moves import xrange
 
 from pyalgotrade import technical
 
+
 # RSI = 100 - 100 / (1 + RS)
 # RS = Average gain / Average loss
 # First Average Gain = Sum of Gains over the past 14 periods / 14
@@ -62,16 +63,16 @@ def avg_gain_loss(values, begin, end):
 
     gain = 0
     loss = 0
-    for i in xrange(begin+1, end):
-        currGain, currLoss = gain_loss_one(values[i-1], values[i])
+    for i in xrange(begin + 1, end):
+        currGain, currLoss = gain_loss_one(values[i - 1], values[i])
         gain += currGain
         loss += currLoss
-    return (gain/float(rangeLen-1), loss/float(rangeLen-1))
+    return (gain / float(rangeLen - 1), loss / float(rangeLen - 1))
 
 
 class RSIEventWindow(technical.EventWindow):
     def __init__(self, period):
-        assert(period > 1)
+        assert (period > 1)
         # We need N + 1 samples to calculate N averages because they are calculated based on the diff with previous values.
         super(RSIEventWindow, self).__init__(period + 1)
         self.__value = None
@@ -85,16 +86,16 @@ class RSIEventWindow(technical.EventWindow):
         # Formula from http://stockcharts.com/school/doku.php?id=chart_school:technical_indicators:relative_strength_index_rsi
         if value is not None and self.windowFull():
             if self.__prevGain is None:
-                assert(self.__prevLoss is None)
+                assert (self.__prevLoss is None)
                 avgGain, avgLoss = avg_gain_loss(self.getValues(), 0, len(self.getValues()))
             else:
                 # Rest of averages are smoothed
-                assert(self.__prevLoss is not None)
+                assert (self.__prevLoss is not None)
                 prevValue = self.getValues()[-2]
                 currValue = self.getValues()[-1]
                 currGain, currLoss = gain_loss_one(prevValue, currValue)
-                avgGain = (self.__prevGain * (self.__period-1) + currGain) / float(self.__period)
-                avgLoss = (self.__prevLoss * (self.__period-1) + currLoss) / float(self.__period)
+                avgGain = (self.__prevGain * (self.__period - 1) + currGain) / float(self.__period)
+                avgLoss = (self.__prevLoss * (self.__period - 1) + currLoss) / float(self.__period)
 
             if avgLoss == 0:
                 self.__value = 100

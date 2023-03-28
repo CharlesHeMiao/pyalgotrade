@@ -18,14 +18,13 @@
 .. moduleauthor:: Gabriel Martin Becedillas Ruiz <gabriel.becedillas@gmail.com>
 """
 
-
 from pyalgotrade import broker
 from pyalgotrade.broker import backtesting
 from pyalgotrade.bitstamp import common
 from pyalgotrade.bitstamp import livebroker
 
-
 LiveBroker = livebroker.LiveBroker
+
 
 # In a backtesting or paper-trading scenario the BacktestingBroker dispatches events while processing events from the
 # BarFeed.

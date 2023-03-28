@@ -26,8 +26,9 @@ rootLoggerInitialized = False
 
 log_format = "%(asctime)s %(name)s [%(levelname)s] %(message)s"
 level = logging.INFO
-file_log = None  # File name
-console_log = True
+# file_log = 'C:/developer/pyalgotrade/strategy_analysis/log/log.log'  # File name
+file_log = None
+console_log = False
 
 
 def init_handler(handler):
@@ -36,6 +37,8 @@ def init_handler(handler):
 
 def init_logger(logger):
     logger.setLevel(level)
+
+    logger.handlers = []    # clear existing logger handlers
 
     if file_log is not None:
         fileHandler = logging.FileHandler(file_log)

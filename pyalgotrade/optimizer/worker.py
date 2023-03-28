@@ -37,7 +37,8 @@ def any_exception(exception):
     return True
 
 
-@retrying.retry(wait_exponential_multiplier=wait_exponential_multiplier, wait_exponential_max=wait_exponential_max, stop_max_delay=stop_max_delay, retry_on_exception=any_exception)
+@retrying.retry(wait_exponential_multiplier=wait_exponential_multiplier, wait_exponential_max=wait_exponential_max,
+                stop_max_delay=stop_max_delay, retry_on_exception=any_exception)
 def retry_on_network_error(function, *args, **kwargs):
     return function(*args, **kwargs)
 
@@ -98,7 +99,7 @@ class Worker(object):
             # Run with the next set of parameters.
             parameters = job.getNextParameters()
 
-        assert(bestParams is not None)
+        assert (bestParams is not None)
         self.pushJobResults(job.getId(), bestResult, bestParams)
 
     # Run the strategy and return the result.
@@ -148,7 +149,7 @@ def run(strategyClass, address, port, workerCount=None, workerName=None):
     :type workerName: string.
     """
 
-    assert(workerCount is None or workerCount > 0)
+    assert (workerCount is None or workerCount > 0)
     if workerCount is None:
         workerCount = multiprocessing.cpu_count()
 

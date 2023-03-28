@@ -61,7 +61,8 @@ def download_daily_bars(sourceCode, tableCode, year, csvFile, authToken=None):
     :type authToken: string.
     """
 
-    bars = download_csv(sourceCode, tableCode, datetime.date(year, 1, 1), datetime.date(year, 12, 31), "daily", authToken)
+    bars = download_csv(sourceCode, tableCode, datetime.date(year, 1, 1), datetime.date(year, 12, 31), "daily",
+                        authToken)
     f = open(csvFile, "w")
     f.write(bars)
     f.close()
@@ -143,7 +144,7 @@ def build_feed(sourceCode, tableCodes, fromYear, toYear, storage, frequency=bar.
         logger.info("Creating %s directory" % (storage))
         os.mkdir(storage)
 
-    for year in range(fromYear, toYear+1):
+    for year in range(fromYear, toYear + 1):
         for tableCode in tableCodes:
             fileName = os.path.join(storage, "%s-%s-%d-quandl.csv" % (sourceCode, tableCode, year))
             if not os.path.exists(fileName) or forceDownload:
@@ -167,15 +168,18 @@ def build_feed(sourceCode, tableCodes, fromYear, toYear, storage, frequency=bar.
 def main():
     parser = argparse.ArgumentParser(description="Quandl utility")
 
-    parser.add_argument("--auth-token", required=False, help="An authentication token needed if you're doing more than 50 calls per day")
+    parser.add_argument("--auth-token", required=False,
+                        help="An authentication token needed if you're doing more than 50 calls per day")
     parser.add_argument("--source-code", required=True, help="The dataset source code")
     parser.add_argument("--table-code", required=True, help="The dataset table code")
     parser.add_argument("--from-year", required=True, type=int, help="The first year to download")
     parser.add_argument("--to-year", required=True, type=int, help="The last year to download")
     parser.add_argument("--storage", required=True, help="The path were the files will be downloaded to")
     parser.add_argument("--force-download", action='store_true', help="Force downloading even if the files exist")
-    parser.add_argument("--ignore-errors", action='store_true', help="True to keep on downloading files in case of errors")
-    parser.add_argument("--frequency", default="daily", choices=["daily", "weekly"], help="The frequency of the bars. Only daily or weekly are supported")
+    parser.add_argument("--ignore-errors", action='store_true',
+                        help="True to keep on downloading files in case of errors")
+    parser.add_argument("--frequency", default="daily", choices=["daily", "weekly"],
+                        help="The frequency of the bars. Only daily or weekly are supported")
 
     args = parser.parse_args()
 
@@ -185,7 +189,7 @@ def main():
         logger.info("Creating %s directory" % (args.storage))
         os.mkdir(args.storage)
 
-    for year in range(args.from_year, args.to_year+1):
+    for year in range(args.from_year, args.to_year + 1):
         fileName = os.path.join(args.storage, "%s-%s-%d-quandl.csv" % (args.source_code, args.table_code, year))
         if not os.path.exists(fileName) or args.force_download:
             logger.info("Downloading %s %d to %s" % (args.table_code, year, fileName))

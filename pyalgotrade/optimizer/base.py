@@ -33,6 +33,7 @@ class ParameterSource(object):
     """
     Source for backtesting parameters. This class is thread safe.
     """
+
     def __init__(self, params):
         self.__iter = iter(params)
         self.__lock = threading.Lock()
@@ -73,6 +74,7 @@ class ResultSinc(object):
     """
     Sinc for backtest results. This class is thread safe.
     """
+
     def __init__(self):
         self.__lock = threading.Lock()
         self.__bestResult = None

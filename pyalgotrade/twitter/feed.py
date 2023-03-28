@@ -31,7 +31,6 @@ from tweepy import streaming
 from pyalgotrade import observer
 import pyalgotrade.logger
 
-
 logger = pyalgotrade.logger.getLogger("twitter")
 
 
@@ -153,7 +152,7 @@ class TwitterFeed(observer.Subject):
     def join(self):
         if self.__thread is not None:
             self.__thread.join()
-        assert(not self.__running)
+        assert (not self.__running)
 
     def eof(self):
         return not self.__running

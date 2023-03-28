@@ -91,8 +91,8 @@ class LineBreak(dataseries.SequenceDataSeries):
             self.appendWithDateTime(dateTime, line)
 
     def __isReversal(self, value, breakUp):
-        assert(len(self))
-        lines = self[self.__reversalLines*-1:]
+        assert (len(self))
+        lines = self[self.__reversalLines * -1:]
         if breakUp:
             breakPoint = max([line.getHigh() for line in lines])
             ret = value > breakPoint
@@ -125,7 +125,8 @@ class LineBreak(dataseries.SequenceDataSeries):
             white = False
             if bar.getClose(self.__useAdjustedValues) >= bar.getOpen(self.__useAdjustedValues):
                 white = True
-            ret = Line(bar.getLow(self.__useAdjustedValues), bar.getHigh(self.__useAdjustedValues), bar.getDateTime(), white)
+            ret = Line(bar.getLow(self.__useAdjustedValues), bar.getHigh(self.__useAdjustedValues), bar.getDateTime(),
+                       white)
         return ret
 
     def setMaxLen(self, maxLen):

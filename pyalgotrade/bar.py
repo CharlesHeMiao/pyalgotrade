@@ -24,7 +24,6 @@ import six
 
 
 class Frequency(object):
-
     """Enum like class for bar frequencies. Valid values are:
 
     * **Frequency.TRADE**: The bar represents a single trade.
@@ -40,15 +39,14 @@ class Frequency(object):
     TRADE = -1
     SECOND = 1
     MINUTE = 60
-    HOUR = 60*60
-    DAY = 24*60*60
-    WEEK = 24*60*60*7
-    MONTH = 24*60*60*31
+    HOUR = 60 * 60
+    DAY = 24 * 60 * 60
+    WEEK = 24 * 60 * 60 * 7
+    MONTH = 24 * 60 * 60 * 31
 
 
 @six.add_metaclass(abc.ABCMeta)
 class Bar(object):
-
     """A Bar is a summary of the trading activity for a security in a given period.
 
     .. note::
@@ -156,15 +154,15 @@ class BasicBar(Bar):
 
     def __setstate__(self, state):
         (self.__dateTime,
-            self.__open,
-            self.__close,
-            self.__high,
-            self.__low,
-            self.__volume,
-            self.__adjClose,
-            self.__frequency,
-            self.__useAdjustedValue,
-            self.__extra) = state
+         self.__open,
+         self.__close,
+         self.__high,
+         self.__low,
+         self.__volume,
+         self.__adjClose,
+         self.__frequency,
+         self.__useAdjustedValue,
+         self.__extra) = state
 
     def __getstate__(self):
         return (
@@ -243,7 +241,6 @@ class BasicBar(Bar):
 
 
 class Bars(object):
-
     """A group of :class:`Bar` objects.
 
     :param barDict: A map of instrument to :class:`Bar` objects.

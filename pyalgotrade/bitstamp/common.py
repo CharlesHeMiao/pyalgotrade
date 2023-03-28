@@ -21,7 +21,6 @@
 import pyalgotrade.logger
 from pyalgotrade import broker
 
-
 logger = pyalgotrade.logger.getLogger("bitstamp")
 btc_symbol = "BTC"
 

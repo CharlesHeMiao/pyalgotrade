@@ -67,6 +67,7 @@ class FixedPerTrade(Commission):
     :param amount: The commission for an order.
     :type amount: float.
     """
+
     def __init__(self, amount):
         super(FixedPerTrade, self).__init__()
         self.__amount = amount
@@ -85,9 +86,10 @@ class TradePercentage(Commission):
     :param percentage: The percentage to charge. 0.01 means 1%, and so on. It must be smaller than 1.
     :type percentage: float.
     """
+
     def __init__(self, percentage):
         super(TradePercentage, self).__init__()
-        assert(percentage < 1)
+        assert (percentage < 1)
         self.__percentage = percentage
 
     def calculate(self, order, price, quantity):
@@ -104,6 +106,7 @@ class TradePercentageWithMin(Commission):
     :param min_fee: minimum commission fee.
     :type min_fee: float.
     """
+
     def __init__(self, percentage, min_fee):
         super().__init__()
         assert percentage < 1
@@ -204,10 +207,10 @@ class Broker(broker.Broker):
 
     LOGGER_NAME = "broker.backtesting"
 
-    def __init__(self, cash, barFeed, commission=None):
+    def __init__(self, cash, barFeed, fill_strategy=fillstrategy.CustomStrategy(1), commission=None):
         super(Broker, self).__init__()
 
-        assert(cash >= 0)
+        assert (cash >= 0)
         self.__cash = cash
         if commission is None:
             self.__commission = NoCommission()
@@ -217,7 +220,7 @@ class Broker(broker.Broker):
         self.__instrumentPrice = {}  # Used by setShares
         self.__activeOrders = {}
         self.__useAdjustedValues = False
-        self.__fillStrategy = fillstrategy.DefaultStrategy()
+        self.__fillStrategy = fill_strategy
         self.__logger = logger.getLogger(Broker.LOGGER_NAME)
 
         # It is VERY important that the broker subscribes to barfeed events before the strategy.
@@ -239,13 +242,13 @@ class Broker(broker.Broker):
         return ret
 
     def _registerOrder(self, order):
-        assert(order.getId() not in self.__activeOrders)
-        assert(order.getId() is not None)
+        assert (order.getId() not in self.__activeOrders)
+        assert (order.getId() is not None)
         self.__activeOrders[order.getId()] = order
 
     def _unregisterOrder(self, order):
-        assert(order.getId() in self.__activeOrders)
-        assert(order.getId() is not None)
+        assert (order.getId() in self.__activeOrders)
+        assert (order.getId() is not None)
         del self.__activeOrders[order.getId()]
 
     def getLogger(self):
@@ -267,7 +270,7 @@ class Broker(broker.Broker):
     def setCash(self, cash):
         self.__cash = cash
 
-    def getCommission(self):
+    def getCommission(self) -> Commission:
         """Returns the strategy used to calculate order commissions.
 
         :rtype: :class:`Commission`.
@@ -359,24 +362,44 @@ class Broker(broker.Broker):
         return ret
 
     # Tries to commit an order execution.
-    def commitOrderExecution(self, order, dateTime, fillInfo):
+    def commitOrderExecution(self, order: pyalgotrade.broker.Order, dateTime, fillInfo):
         price = fillInfo.getPrice()
         quantity = fillInfo.getQuantity()
 
         if order.isBuy():
             cost = price * quantity * -1
-            assert(cost < 0)
+            assert (cost < 0)
             sharesDelta = quantity
         elif order.isSell():
             cost = price * quantity
-            assert(cost > 0)
+            assert (cost > 0)
             sharesDelta = quantity * -1
         else:  # Unknown action
-            assert(False)
+            assert (False)
 
         commission = self.getCommission().calculate(order, price, quantity)
         cost -= commission
-        resultingCash = self.getCash() + cost
+        cash = self.getCash()
+        resultingCash = cash + cost
+
+        # if remaining cash is not enough to fully fill the order, but partially filling is allowed,,
+        # partially fill the order to the max volume that remaining cash can afford
+        if resultingCash < 0 and not order.getAllOrNone():
+            # calculate max shares can afford
+            lb, ub = 0, quantity
+            while lb < ub:
+                mid = (lb + ub + 1) // 2
+                cost = price * mid * (-1 if order.isBuy() else 1)
+                commission = self.getCommission().calculate(order, price, mid)
+                if cash + cost - commission < 0:
+                    ub = mid - 1
+                else:
+                    lb = mid
+            quantity = lb
+            sharesDelta = quantity * (1 if order.isBuy() else -1)
+            cost = price * quantity * (-1 if order.isBuy() else 1)
+            commission = self.getCommission().calculate(order, price, quantity)
+            resultingCash = cash + cost - commission
 
         # Check that we're ok on cash after the commission.
         if resultingCash >= 0 or self.__allowNegativeCash:
@@ -408,13 +431,20 @@ class Broker(broker.Broker):
                     broker.OrderEvent(order, broker.OrderEvent.Type.PARTIALLY_FILLED, orderExecutionInfo)
                 )
             else:
-                assert(False)
+                assert (False)
         else:
             self.__logger.debug("Not enough cash to fill %s order [%s] for %s share/s" % (
                 order.getInstrument(),
                 order.getId(),
                 order.getRemaining()
             ))
+
+        # a not fully filled non-GTC order should be cancelled
+        if not order.getGoodTillCanceled() and order.isActive():
+            self._unregisterOrder(order)
+            order.switchState(broker.Order.State.CANCELED)
+            self.notifyOrderEvent(
+                broker.OrderEvent(order, broker.OrderEvent.Type.CANCELED, 'un-fully filled non-GTC order'))
 
     def submitOrder(self, order):
         if order.isInitial():
@@ -469,7 +499,7 @@ class Broker(broker.Broker):
         if order.isActive():
             self.__postProcessOrder(order, bar_)
 
-    def __onBarsImpl(self, order, bars):
+    def onBarsImpl(self, order, bars):
         # IF WE'RE DEALING WITH MULTIPLE INSTRUMENTS WE SKIP ORDER PROCESSING IF THERE IS NO BAR FOR THE ORDER'S
         # INSTRUMENT TO GET THE SAME BEHAVIOUR AS IF WERE BE PROCESSING ONLY ONE INSTRUMENT.
         bar_ = bars.getBar(order.getInstrument())
@@ -486,8 +516,8 @@ class Broker(broker.Broker):
             else:
                 # If an order is not active it should be because it was canceled in this same loop and it should
                 # have been removed.
-                assert(order.isCanceled())
-                assert(order not in self.__activeOrders)
+                assert (order.isCanceled())
+                assert (order not in self.__activeOrders)
 
     def onBars(self, dateTime, bars):
         # Let the fill strategy know that new bars are being processed.
@@ -499,7 +529,7 @@ class Broker(broker.Broker):
 
         for order in ordersToProcess:
             # This may trigger orders to be added/removed from __activeOrders.
-            self.__onBarsImpl(order, bars)
+            self.onBarsImpl(order, bars)
 
     def start(self):
         super(Broker, self).start()

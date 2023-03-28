@@ -28,12 +28,13 @@ from pyalgotrade import dispatcher
 
 class Results(object):
     """Results from the profiler."""
+
     def __init__(self, eventsDict, lookBack, lookForward):
-        assert(lookBack > 0)
-        assert(lookForward > 0)
+        assert (lookBack > 0)
+        assert (lookForward > 0)
         self.__lookBack = lookBack
         self.__lookForward = lookForward
-        self.__values = [[] for i in xrange(lookBack+lookForward+1)]
+        self.__values = [[] for i in xrange(lookBack + lookForward + 1)]
         self.__eventCount = 0
 
         # Process events.
@@ -46,11 +47,11 @@ class Results(object):
                     values = np.cumprod(event.getValues() + 1)
                     # Normalize everything to the time of the event
                     values = values / values[event.getLookBack()]
-                    for t in range(event.getLookBack()*-1, event.getLookForward()+1):
-                        self.setValue(t, values[t+event.getLookBack()])
+                    for t in range(event.getLookBack() * -1, event.getLookForward() + 1):
+                        self.setValue(t, values[t + event.getLookBack()])
 
     def __mapPos(self, t):
-        assert(t >= -1*self.__lookBack and t <= self.__lookForward)
+        assert (t >= -1 * self.__lookBack and t <= self.__lookForward)
         return t + self.__lookBack
 
     def setValue(self, t, value):
@@ -92,15 +93,15 @@ class Predicate(object):
 
 class Event(object):
     def __init__(self, lookBack, lookForward):
-        assert(lookBack > 0)
-        assert(lookForward > 0)
+        assert (lookBack > 0)
+        assert (lookForward > 0)
         self.__lookBack = lookBack
         self.__lookForward = lookForward
         self.__values = np.empty((lookBack + lookForward + 1))
         self.__values[:] = np.NAN
 
     def __mapPos(self, t):
-        assert(t >= -1*self.__lookBack and t <= self.__lookForward)
+        assert (t >= -1 * self.__lookBack and t <= self.__lookForward)
         return t + self.__lookBack
 
     def isComplete(self):
@@ -138,8 +139,8 @@ class Profiler(object):
     """
 
     def __init__(self, predicate, lookBack, lookForward):
-        assert(lookBack > 0)
-        assert(lookForward > 0)
+        assert (lookBack > 0)
+        assert (lookForward > 0)
         self.__predicate = predicate
         self.__lookBack = lookBack
         self.__lookForward = lookForward
@@ -154,7 +155,7 @@ class Profiler(object):
             try:
                 ret = self.__rets[instrument][t]
                 if ret is not None:
-                    event.setValue(t+1, ret)
+                    event.setValue(t + 1, ret)
             except IndexError:
                 pass
 
@@ -223,7 +224,7 @@ def build_plot(profilerResults):
     x = []
     mean = []
     std = []
-    for t in xrange(profilerResults.getLookBack()*-1, profilerResults.getLookForward()+1):
+    for t in xrange(profilerResults.getLookBack() * -1, profilerResults.getLookForward() + 1):
         x.append(t)
         values = np.asarray(profilerResults.getValues(t))
         mean.append(values.mean())
@@ -236,7 +237,7 @@ def build_plot(profilerResults):
 
     # Error bars starting on the first lookforward period.
     lookBack = profilerResults.getLookBack()
-    firstLookForward = lookBack+1
+    firstLookForward = lookBack + 1
     plt.errorbar(
         x=x[firstLookForward:], y=mean[firstLookForward:], yerr=std[firstLookForward:],
         capsize=3,
@@ -246,11 +247,11 @@ def build_plot(profilerResults):
     # Horizontal line at the level of the first cumulative return.
     plt.axhline(
         y=mean[lookBack],
-        xmin=-1*profilerResults.getLookBack(), xmax=profilerResults.getLookForward(),
+        xmin=-1 * profilerResults.getLookBack(), xmax=profilerResults.getLookForward(),
         color='#000000'
     )
 
-    plt.xlim(profilerResults.getLookBack()*-1-0.5, profilerResults.getLookForward()+0.5)
+    plt.xlim(profilerResults.getLookBack() * -1 - 0.5, profilerResults.getLookForward() + 0.5)
     plt.xlabel('Time')
     plt.ylabel('Cumulative returns')
 

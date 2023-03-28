@@ -129,6 +129,13 @@ class Order(object):
         STOP_LIMIT = 4
         NEXT_CUSTOM_TYPE = 1000
 
+    class TimeInForce(object):
+        IOC = 1  # Immediate or Canceled
+        GFD = 2  # Good for Day
+        GTC = 3  # Good Till Canceled
+        FOF = 4  # Fill or Kill (All or Nothing)
+        GTD = 5  # Good Till Day
+
     # Valid state transitions.
     VALID_TRANSITIONS = {
         State.INITIAL: [State.SUBMITTED, State.CANCELED],
@@ -137,7 +144,7 @@ class Order(object):
         State.PARTIALLY_FILLED: [State.PARTIALLY_FILLED, State.FILLED, State.CANCELED],
     }
 
-    def __init__(self, type_, action, instrument, quantity, instrumentTraits):
+    def __init__(self, type_, action, instrument, quantity, instrumentTraits, tif=1):
         if quantity is not None and quantity <= 0:
             raise Exception("Invalid quantity")
 
@@ -147,6 +154,7 @@ class Order(object):
         self.__instrument = instrument
         self.__quantity = quantity
         self.__instrumentTraits = instrumentTraits
+        self.__tif = tif
         self.__filled = 0
         self.__avgFillPrice = None
         self.__executionInfo = None
@@ -157,16 +165,16 @@ class Order(object):
         self.__submitDateTime = None
 
     # This is to check that orders are not compared directly. order ids should be compared.
-#    def __eq__(self, other):
-#        if other is None:
-#            return False
-#        assert(False)
+    #    def __eq__(self, other):
+    #        if other is None:
+    #            return False
+    #        assert(False)
 
     # This is to check that orders are not compared directly. order ids should be compared.
-#    def __ne__(self, other):
-#        if other is None:
-#            return True
-#        assert(False)
+    #    def __ne__(self, other):
+    #        if other is None:
+    #            return True
+    #        assert(False)
 
     def _setQuantity(self, quantity):
         assert self.__quantity is None, "Can only change the quantity if it was undefined"
@@ -201,7 +209,7 @@ class Order(object):
         return self.__submitDateTime
 
     def setSubmitted(self, orderId, dateTime):
-        assert(self.__id is None or orderId == self.__id)
+        assert (self.__id is None or orderId == self.__id)
         self.__id = orderId
         self.__submitDateTime = dateTime
 
@@ -226,6 +234,29 @@ class Order(object):
          * Order.State.FILLED
         """
         return self.__state
+
+    def getTimeInForce(self):
+        """Returns the order time in force.
+
+        """
+        return self.__tif
+
+    def is_tif(self, tif: str) -> bool:
+        """Return True if the order's time in force type is the give type"""
+        assert isinstance(tif, str)
+        tif = tif.upper()
+        if tif == 'IOC':
+            return self.__tif == 1
+        elif tif == 'GFD':
+            return self.__tif == 2
+        elif tif == 'GTC':
+            return self.__tif == 3
+        elif tif == 'FOF':
+            return self.__tif == 4
+        elif tif == 'GTD':
+            return self.__tif == 5
+        else:
+            raise TypeError('unknown time in force type: %s' % tif)
 
     def isActive(self):
         """Returns True if the order is active."""
@@ -314,12 +345,15 @@ class Order(object):
 
     def addExecutionInfo(self, orderExecutionInfo):
         if orderExecutionInfo.getQuantity() > self.getRemaining():
-            raise Exception("Invalid fill size. %s remaining and %s filled" % (self.getRemaining(), orderExecutionInfo.getQuantity()))
+            raise Exception("Invalid fill size. %s remaining and %s filled" % (
+                self.getRemaining(), orderExecutionInfo.getQuantity()))
 
         if self.__avgFillPrice is None:
             self.__avgFillPrice = orderExecutionInfo.getPrice()
         else:
-            self.__avgFillPrice = (self.__avgFillPrice * self.__filled + orderExecutionInfo.getPrice() * orderExecutionInfo.getQuantity()) / float(self.__filled + orderExecutionInfo.getQuantity())
+            self.__avgFillPrice = (
+                                          self.__avgFillPrice * self.__filled + orderExecutionInfo.getPrice() * orderExecutionInfo.getQuantity()) / float(
+                self.__filled + orderExecutionInfo.getQuantity())
 
         self.__executionInfo = orderExecutionInfo
         self.__filled = self.getInstrumentTraits().roundQuantity(self.__filled + orderExecutionInfo.getQuantity())
@@ -328,13 +362,14 @@ class Order(object):
         if self.getRemaining() == 0:
             self.switchState(Order.State.FILLED)
         else:
-            assert(not self.__allOrNone)
+            assert (not self.__allOrNone)
             self.switchState(Order.State.PARTIALLY_FILLED)
 
     def switchState(self, newState):
         validTransitions = Order.VALID_TRANSITIONS.get(self.__state, [])
         if newState not in validTransitions:
-            raise Exception("Invalid order state transition from %s to %s" % (Order.State.toString(self.__state), Order.State.toString(newState)))
+            raise Exception("Invalid order state transition from %s to %s" % (
+                Order.State.toString(self.__state), Order.State.toString(newState)))
         else:
             self.__state = newState
 
@@ -433,6 +468,7 @@ class StopLimitOrder(Order):
 
 class OrderExecutionInfo(object):
     """Execution information for an order."""
+
     def __init__(self, price, quantity, commission, dateTime):
         self.__price = price
         self.__quantity = quantity
@@ -440,7 +476,8 @@ class OrderExecutionInfo(object):
         self.__dateTime = dateTime
 
     def __str__(self):
-        return "%s - Price: %s - Amount: %s - Fee: %s" % (self.__dateTime, self.__price, self.__quantity, self.__commission)
+        return "%s - Price: %s - Amount: %s - Fee: %s" % (
+            self.__dateTime, self.__price, self.__quantity, self.__commission)
 
     def getPrice(self):
         """Returns the fill price."""

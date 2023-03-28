@@ -112,7 +112,7 @@ class PositionTracker(object):
 
     def __extendCurrentPosition(self, quantity, price):
         newPosition = self.__instrumentTraits.roundQuantity(self.__position + quantity)
-        self.__avgPrice = (self.__avgPrice*abs(self.__position) + price*abs(quantity)) / abs(float(newPosition))
+        self.__avgPrice = (self.__avgPrice * abs(self.__position) + price * abs(quantity)) / abs(float(newPosition))
         self.__position = newPosition
         self.__totalCommited = self.__avgPrice * abs(self.__position)
 
@@ -149,7 +149,7 @@ class PositionTracker(object):
                     self.__reduceCurrentPosition(quantity, price)
                 else:
                     newPos = self.__position + quantity
-                    self.__reduceCurrentPosition(self.__position*-1, price)
+                    self.__reduceCurrentPosition(self.__position * -1, price)
                     self.__openNewPosition(newPos, price)
 
         self.__commissions += commission

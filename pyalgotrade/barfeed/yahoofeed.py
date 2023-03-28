@@ -108,7 +108,8 @@ class Feed(csvfeed.BarFeed):
 
     def __init__(self, frequency=bar.Frequency.DAY, timezone=None, maxLen=None):
         if isinstance(timezone, int):
-            raise Exception("timezone as an int parameter is not supported anymore. Please use a pytz timezone instead.")
+            raise Exception(
+                "timezone as an int parameter is not supported anymore. Please use a pytz timezone instead.")
 
         if frequency not in [bar.Frequency.DAY, bar.Frequency.WEEK]:
             raise Exception("Invalid frequency.")
@@ -141,7 +142,8 @@ class Feed(csvfeed.BarFeed):
         """
 
         if isinstance(timezone, int):
-            raise Exception("timezone as an int parameter is not supported anymore. Please use a pytz timezone instead.")
+            raise Exception(
+                "timezone as an int parameter is not supported anymore. Please use a pytz timezone instead.")
 
         if timezone is None:
             timezone = self.__timezone

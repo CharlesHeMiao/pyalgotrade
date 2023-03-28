@@ -27,6 +27,7 @@ logger = pyalgotrade.logger.getLogger(__name__)
 
 class Results(object):
     """The results of the strategy executions."""
+
     def __init__(self, parameters, result):
         self.__parameters = parameters
         self.__result = result

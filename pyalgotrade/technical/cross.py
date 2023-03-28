@@ -20,7 +20,7 @@
 
 
 def compute_diff(values1, values2):
-    assert(len(values1) == len(values2))
+    assert (len(values1) == len(values2))
     ret = []
     for i in range(len(values1)):
         v1 = values1[i]
@@ -38,12 +38,12 @@ def _get_stripped(values1, values2, alignLeft):
         if alignLeft:
             values1 = values1[0:len(values2)]
         else:
-            values1 = values1[len(values1)-len(values2):]
+            values1 = values1[len(values1) - len(values2):]
     elif len(values2) > len(values1):
         if alignLeft:
             values2 = values2[0:len(values1)]
         else:
-            values2 = values2[len(values2)-len(values1):]
+            values2 = values2[len(values2) - len(values1):]
     return values1, values2
 
 

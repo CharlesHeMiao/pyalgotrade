@@ -25,7 +25,6 @@ from pyalgotrade.dataseries import bards
 from pyalgotrade import feed
 from pyalgotrade import dispatchprio
 
-
 # This is only for backward compatibility since Frequency used to be defined here and not in bar.py.
 Frequency = bar.Frequency
 

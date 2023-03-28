@@ -39,7 +39,7 @@ def hurst_exp(p, minLags, maxLags):
     # linear fit to double-log graph (gives power)
     m = np.polyfit(np.log10(lagvec), np.log10(tau), 1)
     # calculate hurst
-    hurst = m[0]*2
+    hurst = m[0] * 2
     return hurst
 
 

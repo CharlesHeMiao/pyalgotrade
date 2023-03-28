@@ -26,7 +26,6 @@ import pyalgotrade
 from pyalgotrade.websocket import client
 import pyalgotrade.logger
 
-
 logger = pyalgotrade.logger.getLogger("pusher")
 
 
@@ -76,7 +75,7 @@ class WebSocketClient(client.WebSocketClientBase):
             "protocol": protocol,
             "client": "Python-PyAlgoTrade",
             "version": pyalgotrade.__version__
-            }
+        }
         url = "ws://ws.pusherapp.com/app/%s?%s" % (appKey, urlencode(params))
         super(WebSocketClient, self).__init__(url)
         self.setKeepAliveMgr(PingKeepAliveMgr(self, maxInactivity, responseTimeout))

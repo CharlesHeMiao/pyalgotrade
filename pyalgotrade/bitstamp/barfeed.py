@@ -18,8 +18,6 @@
 .. moduleauthor:: Gabriel Martin Becedillas Ruiz <gabriel.becedillas@gmail.com>
 """
 
-
 from pyalgotrade.bitstamp import livefeed
-
 
 LiveTradeFeed = livefeed.LiveTradeFeed

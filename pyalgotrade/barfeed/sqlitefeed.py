@@ -100,19 +100,21 @@ class Database(dbfeed.Database):
 
         try:
             sql = "insert into bar (instrument_id, frequency, timestamp, open, high, low, close, volume, adj_close) values (?, ?, ?, ?, ?, ?, ?, ?, ?)"
-            params = [instrumentId, frequency, timeStamp, bar.getOpen(), bar.getHigh(), bar.getLow(), bar.getClose(), bar.getVolume(), bar.getAdjClose()]
+            params = [instrumentId, frequency, timeStamp, bar.getOpen(), bar.getHigh(), bar.getLow(), bar.getClose(),
+                      bar.getVolume(), bar.getAdjClose()]
             self.__connection.execute(sql, params)
         except sqlite3.IntegrityError:
             sql = "update bar set open = ?, high = ?, low = ?, close = ?, volume = ?, adj_close = ?" \
-                " where instrument_id = ? and frequency = ? and timestamp = ?"
-            params = [bar.getOpen(), bar.getHigh(), bar.getLow(), bar.getClose(), bar.getVolume(), bar.getAdjClose(), instrumentId, frequency, timeStamp]
+                  " where instrument_id = ? and frequency = ? and timestamp = ?"
+            params = [bar.getOpen(), bar.getHigh(), bar.getLow(), bar.getClose(), bar.getVolume(), bar.getAdjClose(),
+                      instrumentId, frequency, timeStamp]
             self.__connection.execute(sql, params)
 
     def getBars(self, instrument, frequency, timezone=None, fromDateTime=None, toDateTime=None):
         instrument = normalize_instrument(instrument)
         sql = "select bar.timestamp, bar.open, bar.high, bar.low, bar.close, bar.volume, bar.adj_close, bar.frequency" \
-            " from bar join instrument on (bar.instrument_id = instrument.instrument_id)" \
-            " where instrument.name = ? and bar.frequency = ?"
+              " from bar join instrument on (bar.instrument_id = instrument.instrument_id)" \
+              " where instrument.name = ? and bar.frequency = ?"
         args = [instrument, frequency]
 
         if fromDateTime is not None:

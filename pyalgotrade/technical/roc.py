@@ -53,5 +53,5 @@ class RateOfChange(technical.EventBasedFilter):
     """
 
     def __init__(self, dataSeries, valuesAgo, maxLen=None):
-        assert(valuesAgo > 0)
+        assert (valuesAgo > 0)
         super(RateOfChange, self).__init__(dataSeries, ROCEventWindow(valuesAgo + 1), maxLen)

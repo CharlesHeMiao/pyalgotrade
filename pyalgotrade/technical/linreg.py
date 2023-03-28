@@ -37,7 +37,7 @@ def lsreg(x, y):
 
 class LeastSquaresRegressionWindow(technical.EventWindow):
     def __init__(self, windowSize):
-        assert(windowSize > 1)
+        assert (windowSize > 1)
         super(LeastSquaresRegressionWindow, self).__init__(windowSize)
         self._timestamps = collections.NumPyDeque(windowSize)
 
@@ -46,7 +46,7 @@ class LeastSquaresRegressionWindow(technical.EventWindow):
         if value is not None:
             timestamp = dt.datetime_to_timestamp(dateTime)
             if len(self._timestamps):
-                assert(timestamp > self._timestamps[-1])
+                assert (timestamp > self._timestamps[-1])
             self._timestamps.append(timestamp)
 
     def __getValueAtImpl(self, timestamp):
@@ -78,6 +78,7 @@ class LeastSquaresRegression(technical.EventBasedFilter):
         opposite end. If None then dataseries.DEFAULT_MAX_LEN is used.
     :type maxLen: int.
     """
+
     def __init__(self, dataSeries, windowSize, maxLen=None):
         super(LeastSquaresRegression, self).__init__(dataSeries, LeastSquaresRegressionWindow(windowSize), maxLen)
 
@@ -147,4 +148,5 @@ class TrendEventWindow(SlopeEventWindow):
 
 class Trend(technical.EventBasedFilter):
     def __init__(self, dataSeries, trendDays, positiveThreshold=0, negativeThreshold=0, maxLen=None):
-        super(Trend, self).__init__(dataSeries, TrendEventWindow(trendDays, positiveThreshold, negativeThreshold), maxLen)
+        super(Trend, self).__init__(dataSeries, TrendEventWindow(trendDays, positiveThreshold, negativeThreshold),
+                                    maxLen)

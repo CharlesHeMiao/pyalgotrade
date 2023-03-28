@@ -27,7 +27,6 @@ import pyalgotrade.logger
 from pyalgotrade.optimizer import base
 from pyalgotrade.optimizer import serialization
 
-
 logger = pyalgotrade.logger.getLogger(__name__)
 
 

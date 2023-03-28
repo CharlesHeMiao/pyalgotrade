@@ -23,7 +23,7 @@ from pyalgotrade import technical
 
 class StdDevEventWindow(technical.EventWindow):
     def __init__(self, period, ddof):
-        assert(period > 0)
+        assert (period > 0)
         super(StdDevEventWindow, self).__init__(period)
         self.__ddof = ddof
 
@@ -55,7 +55,7 @@ class StdDev(technical.EventBasedFilter):
 
 class ZScoreEventWindow(technical.EventWindow):
     def __init__(self, period, ddof):
-        assert(period > 1)
+        assert (period > 1)
         super(ZScoreEventWindow, self).__init__(period)
         self.__ddof = ddof
 

@@ -25,12 +25,12 @@ import threading
 import six
 from ws4py.client import tornadoclient
 import tornado
+
 if six.PY3:
     import asyncio
     import tornado.platform.asyncio
 
 import pyalgotrade.logger
-
 
 logger = pyalgotrade.logger.getLogger("websocket.client")
 
@@ -39,8 +39,8 @@ logger = pyalgotrade.logger.getLogger("websocket.client")
 # from the server.
 class KeepAliveMgr(object):
     def __init__(self, wsClient, maxInactivity, responseTimeout):
-        assert(maxInactivity > 0)
-        assert(responseTimeout > 0)
+        assert (maxInactivity > 0)
+        assert (responseTimeout > 0)
         self.__callback = None
         self.__wsClient = wsClient
         self.__activityTimeout = maxInactivity

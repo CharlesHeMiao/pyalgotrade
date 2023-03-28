@@ -26,7 +26,7 @@ from pyalgotrade.dataseries import bards
 # Formula from http://stockcharts.com/school/doku.php?id=chart_school:technical_indicators:average_true_range_atr.
 class ATREventWindow(technical.EventWindow):
     def __init__(self, period, useAdjustedValues):
-        assert(period > 1)
+        assert (period > 1)
         super(ATREventWindow, self).__init__(period)
         self.__useAdjustedValues = useAdjustedValues
         self.__prevClose = None

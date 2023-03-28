@@ -95,7 +95,6 @@ class TradeBar(bar.Bar):
 
 
 class LiveTradeFeed(barfeed.BaseBarFeed):
-
     """A real-time BarFeed that builds bars from live trades.
 
     :param maxLen: The maximum number of values that the :class:`pyalgotrade.dataseries.bards.BarDataSeries` will hold.
@@ -202,7 +201,7 @@ class LiveTradeFeed(barfeed.BaseBarFeed):
         # Build a bar for each trade.
         barDict = {
             common.btc_symbol: TradeBar(self.__getTradeDateTime(trade), trade)
-            }
+        }
         self.__barDicts.append(barDict)
 
     def barsHaveAdjClose(self):

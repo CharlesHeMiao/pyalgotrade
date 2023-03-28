@@ -72,7 +72,7 @@ class Syncer(object):
             self.__append(dateTime, value, self.__values2[pos2][1])
             # Reset buffers.
             self.__values1 = []
-            self.__values2 = self.__values2[pos2+1:]
+            self.__values2 = self.__values2[pos2 + 1:]
         else:
             # Since source dataseries may not hold all the values we need, we need to buffer manually.
             self.__values1.append((dateTime, value))
@@ -84,7 +84,7 @@ class Syncer(object):
         if pos1 is not None:
             self.__append(dateTime, self.__values1[pos1][1], value)
             # Reset buffers.
-            self.__values1 = self.__values1[pos1+1:]
+            self.__values1 = self.__values1[pos1 + 1:]
             self.__values2 = []
         else:
             # Since source dataseries may not hold all the values we need, we need to buffer manually.
